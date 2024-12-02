@@ -28,8 +28,6 @@ echo -e "${GREEN}Top 5 Jobs by Peak CPU Usage:${NC}"
 print_line
 awk -F',' '
     NR>1 { # Skip header
-        # Clean timestamp format (remove Z and T)
-        gsub("T|Z", " ", $1)
 
         if ($4 > cpu[$3] || !($3 in cpu)) {
             cpu[$3] = $4        # Keep track of max CPU
@@ -46,7 +44,6 @@ awk -F',' '
     sort -k2 -nr | \
     head -n 5 | \
     awk '{
-        # Parse timestamp without T and Z
         printf "%-35s %8.2f%%  (at %s)\n",
         $1,
         $2,
@@ -58,9 +55,6 @@ echo -e "${GREEN}Top 5 Jobs by Peak Memory Usage:${NC}"
 print_line
 awk -F',' '
     NR>1 { # Skip header
-        # Clean timestamp format (remove Z and T)
-        gsub("T|Z", " ", $1)
-
         if ($5 > mem[$3] || !($3 in mem)) {
             mem[$3] = $5        # Keep track of max memory
             timestamp[$3] = $1   # Store timestamp of max value
@@ -76,7 +70,6 @@ awk -F',' '
     sort -k2 -nr | \
     head -n 5 | \
     awk '{
-        # Parse timestamp without T and Z
         printf "%-35s %8.2f%%  (at %s)\n",
         $1,
         $2,

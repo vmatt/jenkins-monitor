@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# install.sh - Jenkins Resource Monitor installer
+# install.sh - Jenkins Resource Monitor Shell Scripts installer
 # Must be run as root/sudo
 
 # Color codes for output
