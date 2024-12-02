@@ -9,72 +9,51 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+# Check if file exists
 if [ ! -f "$CSV_FILE" ]; then
-    echo -e "${RED}Error: $CSV_FILE not found!${NC}"
-    echo "Note: This script analyzes the data file, not the log file."
+    echo -e "${RED}Error: CSV file not found at $CSV_FILE${NC}"
     exit 1
 fi
 
 echo -e "${BLUE}Processing $CSV_FILE...${NC}"
 echo
 
-# Function to print horizontal line
-print_line() {
-    printf '%.0s-' {1..65}
-    echo
+# Process CPU peaks
+echo "Top 5 Jobs by Peak CPU Usage:"
+echo "-----------------------------------------------------------------"
+awk -F',' 'NR>0 {
+    if ($4 > max[$3] || !(($3) in max)) {
+        max[$3] = $4
+        timestamp[$3] = $1
+    }
 }
-
-echo -e "${GREEN}Top 5 Jobs by Peak CPU Usage:${NC}"
-print_line
-awk -F',' '
-    NR>1 { # Skip header
-
-        if ($4 > cpu[$3] || !($3 in cpu)) {
-            cpu[$3] = $4        # Keep track of max CPU
-            timestamp[$3] = $1   # Store timestamp of max value
-        }
+END {
+    for (job in max) {
+        printf "%s\t%s\t%s\n", max[job], job, timestamp[job]
     }
-    END {
-        # Output max values with timestamps
-        for (path in cpu) {
-            printf "%s\t%f\t%s\n", path, cpu[path], timestamp[path]
-        }
-    }
-' "$CSV_FILE" | \
-    sort -k2 -nr | \
-    head -n 5 | \
-    awk '{
-        printf "%-35s %8.2f%%  (at %s)\n",
-        $1,
-        $2,
-        $3
-    }'
-
+}' "$CSV_FILE" | sort -nr | head -n 5 | \
+while read -r cpu job timestamp; do
+    printf "%-45s %6.2f%%  (at %s)\n" "$job" "$cpu" "$timestamp"
+done
 echo
-echo -e "${GREEN}Top 5 Jobs by Peak Memory Usage:${NC}"
-print_line
-awk -F',' '
-    NR>1 { # Skip header
-        if ($5 > mem[$3] || !($3 in mem)) {
-            mem[$3] = $5        # Keep track of max memory
-            timestamp[$3] = $1   # Store timestamp of max value
-        }
-    }
-    END {
-        # Output max values with timestamps
-        for (path in mem) {
-            printf "%s\t%f\t%s\n", path, mem[path], timestamp[path]
-        }
-    }
-' "$CSV_FILE" | \
-    sort -k2 -nr | \
-    head -n 5 | \
-    awk '{
-        printf "%-35s %8.2f%%  (at %s)\n",
-        $1,
-        $2,
-        $3
-    }'
 
+# Process memory peaks
+echo "Top 5 Jobs by Peak Memory Usage:"
+echo "-----------------------------------------------------------------"
+awk -F',' 'NR>0 {
+    if ($5 > max[$3] || !(($3) in max)) {
+        max[$3] = $5
+        timestamp[$3] = $1
+    }
+}
+END {
+    for (job in max) {
+        printf "%s\t%s\t%s\n", max[job], job, timestamp[job]
+    }
+}' "$CSV_FILE" | sort -nr | head -n 5 | \
+while read -r mem job timestamp; do
+    printf "%-45s %6.2f%%  (at %s)\n" "$job" "$mem" "$timestamp"
+done
 echo
-echo -e "${BLUE}Stats generated at: $(date)${NC}"
+
+echo "Stats generated at: $(date)"
