@@ -1,4 +1,5 @@
 # Jenkins Resource Monitor Shell Scripts
+[Medium article](https://medium.com/namilink/monitor-jenkins-job-resource-usage-with-bash-scripts-059665dbb00b) 
 
 A lightweight system service that monitors Jenkins job resource usage on Linux systems. It tracks CPU and memory consumption of running Jenkins jobs and provides analysis tools to identify resource-intensive builds.
 
