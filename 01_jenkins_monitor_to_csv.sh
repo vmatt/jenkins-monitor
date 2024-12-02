@@ -1,7 +1,13 @@
 #!/bin/bash
 
-# Output CSV file
-OUTPUT_FILE="build_processes.csv"
+# Output CSV file - now using full path
+OUTPUT_DIR="/var/lib/jenkins-monitor"
+OUTPUT_FILE="${OUTPUT_DIR}/processes.csv"
+
+# Ensure directory exists (though install.sh should have created it)
+if [ ! -d "$OUTPUT_DIR" ]; then
+    mkdir -p "$OUTPUT_DIR"
+fi
 
 # Create CSV header if file doesn't exist
 if [ ! -f "$OUTPUT_FILE" ]; then
@@ -47,7 +53,7 @@ collect_data() {
         echo "$result" >> "$OUTPUT_FILE"
     done
 
-    # Print status message
+    # Log status message to stdout (will be captured by systemd logs)
     echo "$(date): Collected data for ${#results[@]} processes"
 }
 
@@ -59,4 +65,3 @@ while true; do
     collect_data
     sleep 30
 done
-

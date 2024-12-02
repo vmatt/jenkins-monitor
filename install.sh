@@ -79,13 +79,14 @@ ${LOG_DIR}/*.log {
     notifempty
 }
 
-${DATA_DIR}/build_processes.csv {
+${DATA_DIR}/processes.csv {
     daily
     rotate 7
     compress
     missingok
     notifempty
     dateext
+    dateformat -%Y%m%d
 }
 EOL
 check_step "Log rotation configured"
