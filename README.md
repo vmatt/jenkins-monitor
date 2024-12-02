@@ -17,7 +17,27 @@ Tested on AlmaLinux, probably works on CentOS, Fedora, and RHEL systems.
 - Root access for installation
 - Running Jenkins instance
 
-## Installation
+## Usage Options
+
+### Option 1: Quick Standalone Usage
+If you just want to try it out without installing:
+
+1. Clone this repository
+2. Make scripts executable:
+```bash
+chmod +x scripts/*.sh
+```
+
+3. Run the adhoc directly from the scripts directory:
+```bash
+
+# Quick status check
+sudo ./scripts/jenkins_monitor_adhoc.sh
+```
+
+### Option 2: Full Installation
+For permanent monitoring setup:
+
 1. Clone this repository
 2. Run the installer as root:
 ```bash
